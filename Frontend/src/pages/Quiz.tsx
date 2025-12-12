@@ -51,7 +51,7 @@ const QuizPage = () => {
 
   const handleStartQuiz = async () => {
     const topic = selectedTopic || customTopic;
-
+  
     if (!topic) {
       toast({
         title: 'Select a topic',
@@ -60,7 +60,7 @@ const QuizPage = () => {
       });
       return;
     }
-
+  
     if (!address) {
       toast({
         title: 'Wallet not connected',
@@ -69,22 +69,22 @@ const QuizPage = () => {
       });
       return;
     }
-
+  
     setLoading(true);
-
+  
     try {
       console.log('Starting quiz for wallet:', address, 'topic:', topic);
       const response = await generateQuiz({ wallet: address, topic });
       console.log('Quiz API response:', response);
-
-      if (response.success && response.data) {
-        setQuiz(response.data);
-        setStartTime(Date.now());
+  
+      if (response.success && response.data?.data) {
+        setQuiz(response.data.data);
       } else {
         console.warn('Quiz API returned no data or success=false, using fallback');
         setQuiz({ ...fallbackQuiz, topic, title: `${topic} Quiz` });
-        setStartTime(Date.now());
       }
+  
+      setStartTime(Date.now());
     } catch (error) {
       console.error('Error fetching quiz:', error);
       setQuiz({ ...fallbackQuiz, topic, title: `${topic} Quiz` });
