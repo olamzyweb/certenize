@@ -22,8 +22,10 @@ const Gallery = () => {
       setLoading(true);
       try {
         const response = await getCredentials(address);
-        if (response.success && response.data) {
+        if (response.success && Array.isArray(response.data)) {
           setCertificates(response.data);
+        } else {
+          setCertificates([]);
         }
       } catch (error) {
         console.error('Failed to fetch certificates:', error);
