@@ -2,7 +2,7 @@ import { getDefaultConfig } from '@rainbow-me/rainbowkit';
 import { sepolia } from 'wagmi/chains';
 
 const VITE_APP_NAME = import.meta.env.VITE_APP_NAME || 'Certenize';
-const VITE_APP_DESCRIPTION = import.meta.env.VITE_APP_DESCRIPTION || 'Earn immutable blockchain credentials. Complete AI-powered quizzes and mint Soulbound Tokens as proof of your knowledge on Ethereum.';
+const VITE_APP_DESCRIPTION = import.meta.env.VITE_APP_DESCRIPTION || 'Earn immutable blockchain credentials. Complete AI-powered assessments and mint Soulbound Tokens as proof of your knowledge on Ethereum.';
 
 // Thirdweb contract address for Soulbound Tokens (Sepolia testnet)
 export const SOULBOUND_CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS || '0x0000000000000000000000000000000000000000';
