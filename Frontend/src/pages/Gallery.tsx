@@ -96,15 +96,15 @@ const Gallery = () => {
                     No Certificates Yet
                   </h2>
                   <p className="text-muted-foreground mb-6">
-                    Complete a quiz and earn your first Soulbound Token!
+                    Complete an assessment and earn your first Soulbound Token!
                   </p>
-                  <a href="/quiz">
+                  <a href="/assessment">
                     <motion.button
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       className="px-6 py-3 rounded-xl bg-primary text-primary-foreground font-medium"
                     >
-                      Take a Quiz
+                      Take an Assessment
                     </motion.button>
                   </a>
                 </motion.div>
