@@ -54,10 +54,10 @@ const NotFound = () => {
           </a>
 
           <a
-            href="/quiz"
+            href="/assessment"
             className="flex items-center gap-2 bg-zinc-900 border border-zinc-700 px-4 py-2 rounded-lg hover:bg-zinc-800"
           >
-            <Book size={18} /> Take Quiz
+            <Book size={18} /> Take Assessment
           </a>
 
           <a
