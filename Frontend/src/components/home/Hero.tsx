@@ -68,7 +68,7 @@ export function Hero() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10"
           >
-            Complete AI-powered quizzes and earn Soulbound Tokens as proof of your knowledge. 
+            Complete AI-powered assessments and earn Soulbound Tokens as proof of your knowledge. 
             Your achievements, permanently recorded on the blockchain.
           </motion.p>
 
@@ -81,10 +81,10 @@ export function Hero() {
           >
             {isConnected ? (
               <>
-                <Link to="/quiz">
+                <Link to="/assessment">
                   <Button variant="hero" size="xl" className="group">
                     <BookOpen className="w-5 h-5" />
-                    Start Quiz
+                    Start Assessment
                     <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                   </Button>
                 </Link>
