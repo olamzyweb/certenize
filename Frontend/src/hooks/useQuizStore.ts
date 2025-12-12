@@ -28,13 +28,20 @@ export const useQuizStore = create<QuizState>((set, get) => ({
   isSubmitting: false,
   lastResult: null,
 
-  setQuiz: (quiz) => set({
-    currentQuiz: quiz,
-    currentAnswers: new Array(quiz.questions.length).fill(-1),
-    currentQuestionIndex: 0,
-    timeRemaining: quiz.timeLimit,
-    lastResult: null,
-  }),
+  setQuiz: (quiz) => {
+    const questions = Array.isArray(quiz.questions) ? quiz.questions : [];
+  
+    set({
+      currentQuiz: {
+        ...quiz,
+        questions,
+      },
+      currentAnswers: new Array(questions.length).fill(-1),
+      currentQuestionIndex: 0,
+      timeRemaining: quiz.timeLimit ?? 0,
+      lastResult: null,
+    });
+  },
 
   setAnswer: (questionIndex, answerIndex) => {
     const { currentAnswers } = get();
