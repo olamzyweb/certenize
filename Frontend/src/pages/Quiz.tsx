@@ -228,12 +228,13 @@ const QuizPage = () => {
                     </div>
 
                     <div className="flex justify-center mt-8">
-                      <Button
-                        variant="hero"
-                        size="xl"
-                        onClick={handleStartQuiz}
-                        disabled={loading || (!selectedTopic && !customTopic)}
-                      >
+                        <Button
+                          type="button"
+                          variant="hero"
+                          size="xl"
+                          onClick={handleStartQuiz}
+                          disabled={loading || (!selectedTopic && !customTopic)}
+                        >
                         {loading ? (
                           <>
                             <RefreshCw className="w-5 h-5 animate-spin" />
@@ -303,6 +304,7 @@ const QuizPage = () => {
                     {/* Navigation */}
                     <div className="flex items-center justify-between mt-8">
                       <Button
+                        type="button"
                         variant="outline"
                         onClick={previousQuestion}
                         disabled={currentQuestionIndex === 0}
@@ -313,6 +315,7 @@ const QuizPage = () => {
 
                       {isLastQuestion ? (
                         <Button
+                          type="button"
                           variant="hero"
                           onClick={handleSubmitQuiz}
                           disabled={isSubmitting || answeredCount < currentQuiz.questions.length}
@@ -340,6 +343,7 @@ const QuizPage = () => {
                     {/* Reset Button */}
                     <div className="flex justify-center mt-8">
                       <Button
+                        type="button"
                         variant="ghost"
                         size="sm"
                         onClick={resetQuiz}
