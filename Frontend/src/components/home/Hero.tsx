@@ -113,7 +113,7 @@ export function Hero() {
             className="grid grid-cols-3 gap-8 mt-16 max-w-2xl mx-auto"
           >
             {[
-              { value: '100+', label: 'Quizzes' },
+              { value: '100+', label: 'Assessments' },
               { value: '50K+', label: 'Certificates Minted' },
               { value: '∞', label: 'Valid Forever' },
             ].map((stat, index) => (
