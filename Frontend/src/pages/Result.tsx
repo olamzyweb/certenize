@@ -17,7 +17,7 @@ const Result = () => {
 
   useEffect(() => {
     if (!lastResult) {
-      navigate('/quiz');
+      navigate('/assessment');
       return;
     }
 
@@ -38,17 +38,17 @@ const Result = () => {
 
   const handleTryAgain = () => {
     resetQuiz();
-    navigate('/quiz');
+    navigate('/assessment');
   };
 
   return (
     <>
       {/* Helmet for SEO */}
       <Helmet>
-        <title>Quiz Result | {VITE_APP_NAME}</title>
+        <title>Assessment Result | {VITE_APP_NAME}</title>
         <meta
           name="description"
-          content="View your quiz results and earn Soulbound Tokens at {VITE_APP_NAME}."
+          content="View your assessment results and earn Soulbound Tokens at {VITE_APP_NAME}."
         />
       </Helmet>
 
@@ -95,7 +95,7 @@ const Result = () => {
                 </h1>
                 <p className="text-muted-foreground">
                   {lastResult.passed
-                    ? 'You\'ve successfully passed the quiz and earned a certificate!'
+                    ? 'You\'ve successfully passed the assessment and earned a certificate!'
                     : 'You didn\'t reach the passing score this time. Keep learning and try again!'}
                 </p>
               </motion.div>
@@ -118,7 +118,7 @@ const Result = () => {
 
                   <div className="space-y-4">
                     <div className="flex justify-between items-center py-3 border-b border-border">
-                      <span className="text-muted-foreground">Quiz Topic</span>
+                      <span className="text-muted-foreground">Assessment Topic</span>
                       <span className="font-medium">{currentQuiz.topic}</span>
                     </div>
                     <div className="flex justify-between items-center py-3 border-b border-border">
