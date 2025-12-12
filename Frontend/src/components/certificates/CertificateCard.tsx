@@ -87,21 +87,43 @@ export function CertificateCard({ certificate, onClick }: CertificateCardProps) 
           </div>
 
           {certificate.transactionHash && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-full mt-4 text-xs"
-              onClick={(e) => {
-                e.stopPropagation();
-                window.open(
-                  `https://sepolia.etherscan.io/tx/${certificate.transactionHash}`,
-                  '_blank'
-                );
-              }}
-            >
-              View on Etherscan
-              <ExternalLink className="w-3 h-3 ml-2" />
-            </Button>
+            <div className="mt-2 flex flex-col gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full text-xs"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.open(
+                    `https://sepolia.etherscan.io/tx/${certificate.transactionHash}`,
+                    '_blank'
+                  );
+                }}
+              >
+                View on Etherscan
+                <ExternalLink className="w-3 h-3 ml-2" />
+              </Button>
+          
+              {/* LinkedIn Share */}
+              <Button
+                variant="secondary"
+                size="sm"
+                className="w-full text-xs"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const shareUrl = encodeURIComponent(
+                    `https://yourapp.com/certificate/${certificate.id}` // your public cert page
+                  );
+                  window.open(
+                    `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`,
+                    '_blank',
+                    'width=600,height=600'
+                  );
+                }}
+              >
+                Share on LinkedIn
+              </Button>
+            </div>
           )}
         </CardContent>
       </Card>
