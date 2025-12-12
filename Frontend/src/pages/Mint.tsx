@@ -100,9 +100,9 @@ const Mint = () => {
             <Navbar />
             <main className="pt-24 pb-12">
               <div className="container mx-auto px-4 text-center">
-                <p className="text-muted-foreground">No quiz result found. Please complete a quiz first.</p>
-                <Button variant="hero" className="mt-4" onClick={() => navigate('/quiz')}>
-                  Take a Quiz
+                <p className="text-muted-foreground">No assessment result found. Kindly complete an assessment first.</p>
+                <Button variant="hero" className="mt-4" onClick={() => navigate('/assessment')}>
+                  Take an Assessment
                 </Button>
               </div>
             </main>
