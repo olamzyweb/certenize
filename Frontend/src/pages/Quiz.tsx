@@ -50,7 +50,6 @@ const QuizPage = () => {
   } = useQuizStore();
 
   const handleStartQuiz = async () => {
-    const wallet = address;
     const topic = selectedTopic || customTopic;
     if (!topic) {
       toast({
@@ -63,7 +62,10 @@ const QuizPage = () => {
 
     setLoading(true);
     try {
-      const response = await generateQuiz({ topic });
+      const response = await generateQuiz({ 
+        wallet: address || '',
+        topic 
+      });
       if (response.success && response.data) {
         setQuiz(response.data);
         setStartTime(Date.now());
