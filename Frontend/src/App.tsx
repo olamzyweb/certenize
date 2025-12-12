@@ -10,7 +10,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 import {HelmetProvider} from "react-helmet-async";
 
 import Home from "./pages/Home";
-import Quiz from "./pages/Quiz";
+import Assessment from "./pages/Assessment";
 import Result from "./pages/Result";
 import Mint from "./pages/Mint";
 import Gallery from "./pages/Gallery";
@@ -36,7 +36,7 @@ const App = () => (
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/quiz" element={<Quiz />} />
+                <Route path="/assessment" element={<Quiz />} />
                 <Route path="/result" element={<Result />} />
                 <Route path="/mint" element={<Mint />} />
                 <Route path="/gallery" element={<Gallery />} />
