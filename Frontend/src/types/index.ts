@@ -48,6 +48,7 @@ export interface ApiResponse<T> {
 }
 
 export interface GenerateQuizRequest {
+  wallet: string;
   topic: string;
   pdfContent?: string;
   difficulty?: 'easy' | 'medium' | 'hard';

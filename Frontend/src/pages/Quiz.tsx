@@ -50,6 +50,7 @@ const QuizPage = () => {
   } = useQuizStore();
 
   const handleStartQuiz = async () => {
+    const wallet = address;
     const topic = selectedTopic || customTopic;
     if (!topic) {
       toast({
