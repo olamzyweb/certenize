@@ -44,12 +44,12 @@ const Home = () => {
                   Ready to Prove Your Knowledge?
                 </h2>
                 <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
-                  Start your first quiz today and earn blockchain-verified credentials that last forever.
+                  Start your first assessment today and earn blockchain-verified credentials that last forever.
                 </p>
                 {isConnected && (
-                  <Link to="/quiz">
+                  <Link to="/assessment">
                     <Button variant="hero" size="xl" className="group">
-                      Take Your First Quiz
+                      Take Your First Assessment
                       <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
                     </Button>
                   </Link>
