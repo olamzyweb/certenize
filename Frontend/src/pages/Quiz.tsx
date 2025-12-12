@@ -56,7 +56,7 @@ const QuizPage = () => {
     if (!topic) {
       toast({
         title: 'Select a topic',
-        description: 'Please choose or enter a quiz topic',
+        description: 'Please choose or enter an assessment topic',
         variant: 'destructive',
       });
       return;
@@ -65,7 +65,7 @@ const QuizPage = () => {
     if (!address) {
       toast({
         title: 'Wallet not connected',
-        description: 'Please connect your wallet to start the quiz.',
+        description: 'Please connect your wallet to start the assessment.',
         variant: 'destructive',
       });
       return;
@@ -74,9 +74,9 @@ const QuizPage = () => {
     setLoading(true);
   
     try {
-      console.log('Starting quiz for wallet:', address, 'topic:', topic);
+      console.log('Starting assessment for wallet:', address, 'topic:', topic);
       const response = await generateQuiz({ wallet: address, topic });
-      console.log('Quiz API response:', response);
+      console.log('Assessment API response:', response);
   
       if (response.success && response.data?.data) {
         setQuiz(response.data.data);
@@ -110,7 +110,7 @@ const QuizPage = () => {
       });
   
       if (response.success && response.data?.data) {
-        setResult(response.data.data); // ✅ unwrap nested data
+        setResult(response.data.data); // unwrap nested data
         navigate('/result');
       }
     } catch (error) {
@@ -151,10 +151,10 @@ const QuizPage = () => {
     <>
       {/* Helmet for SEO */}
       <Helmet>
-        <title>Quiz | {VITE_APP_NAME}</title>
+        <title>Assessment | {VITE_APP_NAME}</title>
         <meta
           name="description"
-          content="Take quizzes on various blockchain topics and earn Soulboundible Counsel."
+          content="Take assessments on various blockchain topics and earn Soulboundible Counsel."
         />
       </Helmet>
 
