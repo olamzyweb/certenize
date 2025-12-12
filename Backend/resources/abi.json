@@ -1,0 +1,20 @@
+[
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "to",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "metadata",
+                "type": "string"
+            }
+        ],
+        "name": "mintTo",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    }
+]
