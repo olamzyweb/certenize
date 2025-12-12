@@ -6,7 +6,7 @@ const VITE_APP_NAME = import.meta.env.VITE_APP_NAME || 'Certenize';
 const features = [
   {
     icon: Brain,
-    title: 'AI-Generated Quizzes',
+    title: 'AI-Generated Assessments',
     description: 'Dynamic questions powered by artificial intelligence, tailored to any topic you choose.',
   },
   {
