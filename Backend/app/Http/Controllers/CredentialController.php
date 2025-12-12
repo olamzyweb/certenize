@@ -27,29 +27,26 @@ class CredentialController extends Controller
                 ->firstOrFail();
 
             $rpcUrl = env('RPC_URL');
-            $privateKey = env('PRIVATE_KEY'); // without 0x prefix is fine
-            $contractAddress = env('CONTRACT_ADDRESS', '0xe6b3794191523de54a03a685fdd786b313b1788c');
-            $fromAddress = env('FROM_ADDRESS'); // recommended; if empty will try to derive (not implemented here)
+            $privateKey = env('PRIVATE_KEY');
+            $contractAddress = env('CONTRACT_ADDRESS');
+            $fromAddress = env('FROM_ADDRESS');
 
             if (!$rpcUrl || !$privateKey) {
-                return response()->json(['success' => false, 'error' => 'RPC_URL or PRIVATE_KEY not set in .env'], 500);
+                return response()->json(['success' => false, 'error' => 'RPC_URL or PRIVATE_KEY not set'], 500);
             }
 
-            // Normalize private key (remove 0x if present)
             $privateKey = ltrim($privateKey, '0x');
 
-            // Validate wallet address format
             if (!preg_match('/^0x[a-fA-F0-9]{40}$/', $session->wallet_address)) {
-                return response()->json(['success' => false, 'error' => 'Invalid wallet address format.'], 400);
+                return response()->json(['success' => false, 'error' => 'Invalid wallet address'], 400);
             }
 
-            // Setup web3 with a longer timeout
-            $timeout = (int)env('RPC_TIMEOUT', 30);
-            $requestManager = new HttpRequestManager($rpcUrl, $timeout);
+            // Setup Web3
+            $requestManager = new HttpRequestManager($rpcUrl, 30);
             $provider = new HttpProvider($requestManager);
             $web3 = new Web3($provider);
 
-            // --- Build NFT metadata (string) ---
+            // Build metadata
             $metadata = [
                 'name' => $session->topic,
                 'description' => 'Cred-AI verified skill',
@@ -57,103 +54,65 @@ class CredentialController extends Controller
                     ['trait_type' => 'Score', 'value' => (string)$session->score]
                 ]
             ];
-            $metadataJson = json_encode($metadata, JSON_UNESCAPED_SLASHES);
-
-            // --- Encode mintTo(address, string) manually (selector + ABI encode) ---
-            $functionSignature = 'mintTo(address,string)';
-            $selector = substr(Keccak::hash($functionSignature, 256), 0, 8); // first 4 bytes -> 8 hex chars
-
-            // Head:
-            // param1 (address) => 32 bytes (right-aligned in 32 bytes)
-            // param2 (string)  => offset (0x40) because head size = 2 * 32 = 64 bytes = 0x40
-            $addressPadded = str_pad(ltrim($session->wallet_address, '0x'), 64, '0', STR_PAD_LEFT);
-            $offset = str_pad(dechex(0x40), 64, '0', STR_PAD_LEFT); // offset for dynamic param
-
-            // Tail (dynamic data for string):
+            $metadataJson = json_encode($metadata);
             $metadataHex = bin2hex($metadataJson);
-            $metadataByteLength = strlen(hex2bin($metadataHex));
-            $metadataLenHex = str_pad(dechex($metadataByteLength), 64, '0', STR_PAD_LEFT);
 
-            // pad metadata to 32 byte chunks
-            $mod = strlen($metadataHex) % 64; // 64 hex chars = 32 bytes
+            // Encode function call
+            $selector = substr(Keccak::hash('mintTo(address,string)', 256), 0, 8);
+            $addressPadded = str_pad(ltrim($session->wallet_address, '0x'), 64, '0', STR_PAD_LEFT);
+            $offset = str_pad(dechex(0x40), 64, '0', STR_PAD_LEFT);
+            $metadataLenHex = str_pad(dechex(strlen(hex2bin($metadataHex))), 64, '0', STR_PAD_LEFT);
+
+            $mod = strlen($metadataHex) % 64;
             if ($mod !== 0) {
-                $metadataHex = $metadataHex . str_repeat('0', 64 - $mod);
+                $metadataHex .= str_repeat('0', 64 - $mod);
             }
 
-            $data = '0x' . $selector . $addressPadded . $offset . $metadataLenHex . $metadataHex;
+            $data = "0x{$selector}{$addressPadded}{$offset}{$metadataLenHex}{$metadataHex}";
 
-            // --- Get nonce ---
+            // Get nonce
             $nonce = null;
-$web3->eth->getTransactionCount($fromAddress, 'pending', function ($err, $count) use (&$nonce) {
-    if ($err !== null) {
-        throw new \Exception('getTransactionCount error: ' . $err->getMessage());
-    }
-    $nonce = $count; // BigInteger object
-});
+            $web3->eth->getTransactionCount($fromAddress, 'pending', function ($err, $count) use (&$nonce) {
+                if ($err === null) $nonce = $count;
+            });
 
-// Wait until $nonce is set (if async)
-$waitTime = 0;
-while ($nonce === null && $waitTime < 10) {
-    usleep(100_000); // 0.1 sec
-    $waitTime++;
-}
+            $wait = 0;
+            while ($nonce === null && $wait < 10) {
+                usleep(100000);
+                $wait++;
+            }
 
-if ($nonce === null) {
-    return response()->json(['success' => false, 'error' => 'Failed to fetch nonce.'], 500);
-}
-
-// Convert BigInteger to int
-if ($nonce instanceof \phpseclib\Math\BigInteger) {
-    $nonceInt = (int)$nonce->toString();
-} elseif (is_string($nonce)) {
-    $nonceInt = hexdec(ltrim($nonce, '0x'));
-} else {
-    $nonceInt = (int)$nonce;
-}
-            // --- Build legacy transaction (simpler for compatibility) ---
-            $gasPrice = 50 * 1_000_000_000;  // 50 gwei
-            $gasLimit = 400000;
+            if ($nonce instanceof \phpseclib\Math\BigInteger) {
+                $nonce = (int)$nonce->toString();
+            }
 
             $txArray = [
-                'nonce' => '0x' . dechex($nonceInt),
+                'nonce' => '0x' . dechex($nonce),
                 'to' => $contractAddress,
                 'value' => '0x0',
                 'data' => $data,
-                'gas' => '0x' . dechex($gasLimit),
-                'gasPrice' => '0x' . dechex($gasPrice),
+                'gas' => '0x' . dechex(400000),
+                'gasPrice' => '0x' . dechex(50 * 1_000_000_000),
                 'chainId' => $this->getChainId($rpcUrl)
             ];
 
-            // --- Sign with web3p/ethereum-tx ---
             $tx = new Transaction($txArray);
-            $signed = $tx->sign($privateKey); // returns signed raw hex string WITHOUT 0x prefix in some versions
-            $signedHex = (strpos($signed, '0x') === 0) ? $signed : '0x' . $signed;
+            $signed = $tx->sign($privateKey);
+            $signedHex = '0x' . ltrim($signed, '0x');
 
-            // --- Send raw transaction ---
             $txHash = null;
             $error = null;
+
             $web3->eth->sendRawTransaction($signedHex, function ($err, $tx) use (&$txHash, &$error) {
-                if ($err) {
-                    $error = $err->getMessage();
-                    return;
-                }
-                $txHash = $tx;
+                if ($err) $error = $err->getMessage();
+                else $txHash = $tx;
             });
 
-            if ($error !== null) {
-                Log::error('SBT Minting Error', ['error' => $error, 'wallet' => $session->wallet_address, 'session_id' => $session->id]);
-                if (strpos($error, 'Unsupported method') !== false || strpos($error, 'eth_sendTransaction') !== false) {
-                    return response()->json(['success' => false, 'error' => 'RPC provider does not support eth_sendTransaction. Use sendRawTransaction and ensure cryptographic libs are available.'], 500);
-                }
-                return response()->json(['success' => false, 'error' => 'Transaction failed: ' . $error], 500);
+            if ($error) {
+                return response()->json(['success' => false, 'error' => $error], 500);
             }
 
-            if (empty($txHash)) {
-                Log::error('SBT Minting Error: No transaction hash returned', ['wallet' => $session->wallet_address, 'session_id' => $session->id]);
-                return response()->json(['success' => false, 'error' => 'Transaction sent but no tx hash returned.'], 500);
-            }
-
-            // Save credential record
+            // Save certificate
             $cred = Credential::create([
                 'wallet_address' => $session->wallet_address,
                 'quiz_session_id' => $session->id,
@@ -164,13 +123,27 @@ if ($nonce instanceof \phpseclib\Math\BigInteger) {
                 'minted_at' => now()
             ]);
 
-            return response()->json(['success' => true, 'transaction' => ['transactionHash' => $txHash], 'credential_id' => $cred->id]);
-
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json(['success' => false, 'error' => 'Quiz session not found or not passed.'], 404);
+            // Return a Certificate object (matching your TS interface)
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'id' => (string)$cred->id,
+                    'tokenId' => $cred->token_id,
+                    'title' => $session->topic . " Certificate",
+                    'description' => "Cred-AI verified skill: " . $session->topic,
+                    'recipientAddress' => $cred->wallet_address,
+                    'recipientName' => null,
+                    'issueDate' => now()->toIso8601String(),
+                    'topic' => $cred->skill,
+                    'score' => $cred->score,
+                    'imageUrl' => env('CERT_IMAGE_BASE', url('/placeholder.svg')),
+                    'metadataUri' => null,
+                    'transactionHash' => $txHash,
+                    'minted' => true
+                ]
+            ]);
         } catch (\Exception $e) {
-            Log::error('SBT Minting Exception', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-            return response()->json(['success' => false, 'error' => 'An error occurred: ' . $e->getMessage()], 500);
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
     }
 
@@ -192,6 +165,26 @@ if ($nonce instanceof \phpseclib\Math\BigInteger) {
 
     public function walletCredentials($wallet)
     {
-        return Credential::where('wallet_address', $wallet)->get();
+        $creds = Credential::where('wallet_address', $wallet)->get();
+
+        $data = $creds->map(function ($c) {
+            return [
+                'id' => (string)$c->id,
+                'tokenId' => $c->token_id,
+                'title' => $c->skill . ' Certificate',
+                'description' => 'Cred-AI verified skill: ' . $c->skill,
+                'recipientAddress' => $c->wallet_address,
+                'recipientName' => null,
+                'issueDate' => optional($c->minted_at)->toIso8601String(),
+                'topic' => $c->skill,
+                'score' => $c->score,
+                'imageUrl' => env('CERT_IMAGE_BASE', url('/placeholder.svg')),
+                'metadataUri' => null,
+                'transactionHash' => $c->transaction_hash,
+                'minted' => (bool)$c->minted_at
+            ];
+        });
+
+        return response()->json(['success' => true, 'data' => $data]);
     }
 }
