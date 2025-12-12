@@ -99,7 +99,7 @@ const QuizPage = () => {
     
     setSubmitting(true);
     const timeTaken = Math.floor((Date.now() - startTime) / 1000);
-
+  
     try {
       const response = await submitQuiz({
         quizId: currentQuiz.id,
@@ -107,24 +107,24 @@ const QuizPage = () => {
         walletAddress: address,
         timeTaken,
       });
-
-      if (response.success && response.data) {
-        setResult(response.data);
+  
+      if (response.success && response.data?.data) {
+        setResult(response.data.data); // ✅ unwrap nested data
         navigate('/result');
       }
     } catch (error) {
-      // Calculate result locally
+      // fallback local calculation
       const correctAnswers = currentAnswers.filter(
         (answer, index) => answer === currentQuiz.questions[index]?.correctAnswer
       ).length;
       const percentage = Math.round((correctAnswers / currentQuiz.questions.length) * 100);
-
+  
       setResult({
         quizId: currentQuiz.id,
         score: correctAnswers,
         totalQuestions: currentQuiz.questions.length,
         percentage,
-        passed: percentage >= currentQuiz.passingScore,
+        passed: percentage >= (currentQuiz.passingScore ?? 0),
         answers: currentAnswers,
         completedAt: new Date().toISOString(),
       });
