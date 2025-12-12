@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Send, RefreshCw } from 'lucide-react';
 import { useAccount } from 'wagmi';
 import { Navbar } from '@/components/layout/Navbar';
+import { QuizGuard } from '@/components/auth/QuizGuard';
 import { WalletGuard } from '@/components/auth/WalletGuard';
 import { QuizCard } from '@/components/quiz/QuizCard';
 import { QuizTimer } from '@/components/quiz/QuizTimer';
@@ -159,6 +160,7 @@ const QuizPage = () => {
 
       {/* WalletGuard */}
       <WalletGuard>
+        <QuizGuard>
         <div className="min-h-screen bg-background">
           <Navbar />
           <main className="pt-24 pb-12">
@@ -359,6 +361,7 @@ const QuizPage = () => {
             </div>
           </main>
         </div>
+        </QuizGuard>
       </WalletGuard>
     </>
   );
