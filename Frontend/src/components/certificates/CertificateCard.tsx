@@ -86,45 +86,47 @@ export function CertificateCard({ certificate, onClick }: CertificateCardProps) 
             )}
           </div>
 
+        <div className="mt-2 flex flex-col gap-2">
+          {/* Etherscan – only if minted */}
           {certificate.transactionHash && (
-            <div className="mt-2 flex flex-col gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="w-full text-xs"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  window.open(
-                    `https://sepolia.etherscan.io/tx/${certificate.transactionHash}`,
-                    '_blank'
-                  );
-                }}
-              >
-                View on Etherscan
-                <ExternalLink className="w-3 h-3 ml-2" />
-              </Button>
-          
-              {/* LinkedIn Share */}
-              <Button
-                variant="secondary"
-                size="sm"
-                className="w-full text-xs"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  const shareUrl = encodeURIComponent(
-                    `https://yourapp.com/certificate/${certificate.id}` // your public cert page
-                  );
-                  window.open(
-                    `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`,
-                    '_blank',
-                    'width=600,height=600'
-                  );
-                }}
-              >
-                Share on LinkedIn
-              </Button>
-            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full text-xs"
+              onClick={(e) => {
+                e.stopPropagation();
+                window.open(
+                  `https://sepolia.etherscan.io/tx/${certificate.transactionHash}`,
+                  '_blank'
+                );
+              }}
+            >
+              View on Etherscan
+              <ExternalLink className="w-3 h-3 ml-2" />
+            </Button>
           )}
+        
+          {/* LinkedIn – ALWAYS visible */}
+          <Button
+            variant="secondary"
+            size="sm"
+            className="w-full text-xs"
+            onClick={(e) => {
+              e.stopPropagation();
+              const shareUrl = encodeURIComponent(
+                `https://yourapp.com/certificate/${certificate.id}`
+              );
+              window.open(
+                `https://www.linkedin.com/sharing/share-offsite/?url=${shareUrl}`,
+                '_blank',
+                'width=600,height=600'
+              );
+            }}
+          >
+            Share on LinkedIn
+          </Button>
+        </div>
+
         </CardContent>
       </Card>
     </motion.div>
