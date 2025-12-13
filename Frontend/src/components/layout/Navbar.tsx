@@ -9,7 +9,7 @@ const VITE_APP_NAME = import.meta.env.VITE_APP_NAME || 'Certenize';
 
 const navLinks = [
   { href: '/', label: 'Home', icon: Home },
-  { href: '/quiz', label: 'Quiz', icon: BookOpen },
+  { href: '/assessment', label: 'Assessment', icon: BookOpen },
   { href: '/gallery', label: 'Certificates', icon: Award },
 ];
 
