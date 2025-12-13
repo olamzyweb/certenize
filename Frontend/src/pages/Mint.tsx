@@ -27,7 +27,7 @@ const Mint = () => {
   const [isMinted, setIsMinted] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
 
-  const handleMint = async () => {
+   const handleMint = async () => {
     if (!address || !lastResult || !currentQuiz) {
       toast({
         title: 'Error',
@@ -36,10 +36,11 @@ const Mint = () => {
       });
       return;
     }
-
+  
     setIsMinting(true);
+  
     try {
-      const response = await mintCredential({
+      const request: MintCredentialRequest = {
         walletAddress: address,
         certificateData: {
           title: `${currentQuiz.topic} Certificate`,
@@ -47,30 +48,32 @@ const Mint = () => {
           score: lastResult.percentage,
           recipientName: recipientName || undefined,
         },
-      });
-
-      if (response.success && response.data) {
-        setIsMinted(true);
-        setTxHash(response.data.transactionHash || null);
-        
-        // Celebrate!
-        fireConfetti();
-        setTimeout(() => fireStars(), 1000);
-        
-        toast({
-          title: 'Certificate Minted!',
-          description: 'Your Soulbound Token has been successfully minted.',
-        });
+      };
+  
+      const response = await mintCredential(request);
+  
+      if (!response.success || !response.data) {
+        throw new Error(response.error || 'Failed to mint certificate');
       }
-    } catch (error) {
-      // Simulate successful mint for demo
+  
+      // Backend returned certificate successfully
       setIsMinted(true);
-      setTxHash('0x' + Math.random().toString(16).slice(2, 66));
+      setTxHash(response.data.transactionHash || null);
+  
+      // Confetti celebration
       fireConfetti();
-      
+      setTimeout(() => fireStars(), 1000);
+  
       toast({
         title: 'Certificate Minted!',
         description: 'Your Soulbound Token has been successfully minted.',
+      });
+  
+    } catch (err: any) {
+      toast({
+        title: 'Minting Failed',
+        description: err.message || 'An error occurred while minting.',
+        variant: 'destructive',
       });
     } finally {
       setIsMinting(false);
