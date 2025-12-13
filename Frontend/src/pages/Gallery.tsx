@@ -21,7 +21,8 @@ const Gallery = () => {
       
       setLoading(true);
       try {
-        const response = await getCredentials(address);
+        // const response = await getCredentials(address);
+          const response = await getCertificatesByWallet(address);
           if (response.success && Array.isArray(response.data)) {
             setCertificates(
               response.data.map((cert) => ({
