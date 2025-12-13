@@ -16,39 +16,29 @@ const Gallery = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!address) return;
+  
     const fetchCertificates = async () => {
-      if (!address) return;
-      
       setLoading(true);
       try {
-        // const response = await getCredentials(address);
-          const response = await getCertificatesByWallet(address);
-          if (response.success && Array.isArray(response.data)) {
-            setCertificates(
-              response.data.map((cert) => ({
-                id: cert.id,
-                title: cert.skill,  // map skill -> title
-                topic: cert.skill,      // or use a separate field if you have one
-                score: cert.score,
-                minted: !!cert.minted_at, // boolean
-                issueDate: cert.minted_at || cert.created_at,
-                recipientAddress: cert.wallet_address,
-                tokenId: cert.token_id,
-                transactionHash: cert.transaction_hash,
-              }))
-            );
-          } else {
-            setCertificates([]);
-          }
-      } catch (error) {
-        console.error('Failed to fetch certificates:', error);
+        const response = await getCredentials(address);
+  
+        if (response.success && Array.isArray(response.data)) {
+          setCertificates(response.data);
+        } else {
+          setCertificates([]);
+        }
+      } catch (err) {
+        console.error('Failed to fetch certificates:', err);
+        setCertificates([]);
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchCertificates();
   }, [address]);
+
 
   return (
     <>
