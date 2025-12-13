@@ -4,7 +4,7 @@ import { useAccount } from 'wagmi';
 import { ArrowRight, Award, BookOpen, Shield, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { Typewriter } from 'react-simple-typewriter';
+// import { Typewriter } from 'react-simple-typewriter';
 
 export function Hero() {
   const { isConnected } = useAccount();
@@ -51,26 +51,7 @@ export function Hero() {
           </motion.div>
 
           {/* Headline */}
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-display leading-tight mb-6 text-center"
-          >
-            <span className="text-gradient">
-              <Typewriter
-                words={['Earn Immutable']}
-                loop={false}
-                cursor
-                cursorStyle="_"
-                typeSpeed={100}
-                deleteSpeed={50}
-                delaySpeed={1000}
-              />
-            </span>
-            <br />
-            <span className="text-foreground">Certifications</span>
-          </motion.h1>
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }} className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-display leading-tight mb-6" > <span className="text-gradient">Earn Immutable</span> <br /> <span className="text-foreground">Certifications</span> </motion.h1>
 
           {/* Subheadline */}
           <motion.p
