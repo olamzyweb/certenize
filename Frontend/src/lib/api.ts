@@ -190,4 +190,18 @@ export async function getCredentials(walletAddress: string): Promise<ApiResponse
   );
 }
 
+export async function getCertificatesByWallet(
+  wallet: string
+): Promise<ApiResponse<Certificate[]>> {
+  return fetchWithFallback<Certificate[]>(
+    `${API_BASE_URL}/credential/${wallet}`,
+    { method: 'GET' },
+    fallbackCertificates.map(cert => ({
+      ...cert,
+      recipientAddress: wallet
+    }))
+  );
+}
+
+
 export { fallbackQuiz };
